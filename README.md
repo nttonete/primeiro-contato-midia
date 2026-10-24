@@ -5,3 +5,7 @@ Imagens públicas dos posts do Instagram [@primeirocontatoadv](https://instagram
 ## Na Hora
 
 A pasta `na-hora/` guarda as imagens e vídeos públicos do Instagram [@atendenahora](https://instagram.com/atendenahora), do Na Hora. As fontes e as legendas ficam no repositório privado `primeiro-contato`, na pasta `na-hora/instagram/`.
+
+## Luz da Fé
+
+A pasta `luzdafe/` guarda os vídeos públicos do TikTok @luzdaf8 (versículos da Bíblia narrados), usados pelo Metricool para agendar as publicações.
