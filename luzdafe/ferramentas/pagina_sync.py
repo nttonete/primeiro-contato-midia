@@ -22,6 +22,8 @@ GREEN = (144, 215, 73)
 NAVY = (42, 46, 66)
 GOLD = (236, 190, 72)
 T_READ0 = 1.2
+import os
+HOOK_END = float(os.environ.get('HOOK_END', '2.6'))  # gancho fica na tela até aqui (s)
 LEAD = 0.06          # a caneta anda 60 ms à frente da fala (percepção de "junto")
 
 dados_p, vid, src, asr_p, out_p = sys.argv[1:6]
@@ -237,7 +239,7 @@ def rgba_np(im):
     a = np.array(im).astype(np.float32)
     return a[..., :3], a[..., 3:] / 255.0
 
-P_HOOK = rgba_np(fit_pill(D["hook"], 44, (255, 255, 255)))
+P_HOOK = rgba_np(fit_pill(D["hook"], 52, (255, 255, 255)))
 P_REF = rgba_np(fit_pill(D["ref"], 50, GOLD))
 
 def make_pen():
@@ -341,10 +343,10 @@ for fi in range(NF):
         py = lines[li]["y"] + 6 - top - PEN_TIP[1] + bob + slide * 0.5
         blend(frame, PEN[0], PEN[1], px, py, k)
     # pílulas
-    ah = min(ramp(t, 0.05, 0.35), 1 - ramp(t, 2.3, 2.6))
+    ah = min(ramp(t, 0.05, 0.35), 1 - ramp(t, HOOK_END - 0.3, HOOK_END))
     if ah > 0:
         blend(frame, P_HOOK[0], P_HOOK[1], (W - P_HOOK[1].shape[1]) / 2, 286 - P_HOOK[1].shape[0] / 2, ah)
-    ar = min(ramp(t, 2.8, 3.1), 1 - ramp(t, T_CTA, T_CTA + 0.3))
+    ar = min(ramp(t, HOOK_END + 0.2, HOOK_END + 0.5), 1 - ramp(t, T_CTA, T_CTA + 0.3))
     if ar > 0:
         blend(frame, P_REF[0], P_REF[1], (W - P_REF[1].shape[1]) / 2, 298 - P_REF[1].shape[0] / 2, ar)
     # chamada final
