@@ -4,20 +4,20 @@
 uso: montar_audio.py <voz.mp3> <saida_mix.m4a> <saida_voz_16k.wav>
 Duração total = 1,2 + voz + 0,6 + 2,4 s (chamada final).
 """
-import sys, subprocess
+import sys, os, subprocess
 import numpy as np
 from scipy.io import wavfile
 
 voz, out_mix, out_asr = sys.argv[1:4]
 SR = 44100
-T_READ0 = 1.2
+T_READ0 = float(os.environ.get('T0', '1.2'))
 
 def dur(p):
     return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", p],
                                 capture_output=True, text=True).stdout.strip())
 
 VD = dur(voz)
-TOTAL = T_READ0 + VD + 0.6 + 2.4
+TOTAL = T_READ0 + VD + float(os.environ.get('TAIL', '3.0'))
 
 def music(total, seed=7):
     n = int(total * SR) + SR
