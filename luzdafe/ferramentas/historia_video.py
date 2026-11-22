@@ -101,6 +101,10 @@ cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb2
 proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
 N = len(IMGS); seg = TOTAL / N
 T_END = VOZ_FIM + 0.4
+CAPA = None
+if D.get("capa"):
+    CAPA = Image.open(D["capa"]).convert("RGBA")
+    CAPA = CAPA.resize((int(CAPA.width * 620 / CAPA.height), 620), Image.LANCZOS)
 for fi in range(int(TOTAL * FPS)):
     t = fi / FPS
     k = min(int(t / seg), N - 1); u = (t - k * seg) / seg
@@ -113,7 +117,8 @@ for fi in range(int(TOTAL * FPS)):
     d = ImageDraw.Draw(fr)
     # cabeçalho fixo
     d.text((W / 2, 205), D["serie"].upper(), font=F_LAB, fill=GOLD, anchor="mm")
-    d.text((W / 2, 275), f'{D["titulo"]} · Parte {D["parte"]}', font=F_TIT, fill=CREAM, anchor="mm",
+    tit = D["titulo"] if not D.get("parte") else f'{D["titulo"]} · Parte {D["parte"]}'
+    d.text((W / 2, 275), tit, font=F_TIT, fill=CREAM, anchor="mm",
            stroke_width=3, stroke_fill=(15, 15, 22))
     if t < T_END:
         legenda(d, t)
@@ -122,6 +127,10 @@ for fi in range(int(TOTAL * FPS)):
         ov = Image.new("RGBA", (W, H), (18, 20, 34, int(150 * a)))
         fr = Image.alpha_composite(fr.convert("RGBA"), ov).convert("RGB"); d = ImageDraw.Draw(fr)
         y0 = 1060 + (1 - a) * 40
+        if CAPA is not None:
+            cimg = CAPA.copy(); cimg.putalpha(int(255 * a))
+            fr.paste(cimg, (int(W / 2 - CAPA.width / 2), int(y0 - CAPA.height - 50)), cimg)
+            d = ImageDraw.Draw(fr)
         d.rounded_rectangle((140, y0, W - 140, y0 + 150), 75, fill=GOLD)
         d.text((W / 2, y0 + 75), D["fim1"], font=F_END1, fill=(29, 32, 51), anchor="mm")
         d.text((W / 2, y0 + 230), D["fim2"], font=F_END2, fill=CREAM, anchor="mm")
